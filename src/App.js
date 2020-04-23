@@ -2,29 +2,42 @@ import React, { Component } from 'react';
 import './App.css';
 import './AppCustom.css';
 import Game from './GameComponent/Game';
+import axios from 'axios';
 
 class App extends Component {
   state = {
-    games: [
-        {title: "Cuphead", 
-         img: "./media/cuphead.png", 
-         description: `Cuphead is a classic run and gun action game heavily focused on boss battles. 
-         Inspired by cartoons of the 1930s, the visuals and audio are painstakingly created with the same techniques of the era, 
-         i.e. traditional hand drawn cel animation, watercolor backgrounds, and original jazz recordings`},
-        {title: "Stardew Valley", 
-         img: "./media/stardew-valley.jpeg", 
-         description: `In Stardew Valley, players take the role of a character who, to get away from the hustle of the city, 
-         takes over their deceased grandfather's dilapidated farm in a place known as Stardew Valley. 
-         The game is open-ended, allowing players to take on several activities such as growing crops, raising livestock, crafting goods, mining for ores, selling produce, and socializing with the townsfolk, including marriage and having children.`},
-        {title: "Dead Cells", 
-         img: "./media/dead-cells.jpg", 
-         description: `In Stardew Valley, players take the role of a character who, to get away from the hustle of the city, 
-         takes over their deceased grandfather's dilapidated farm in a place known as Stardew Valley. 
-         The game is open-ended, allowing players to take on several activities such as growing crops, raising livestock, crafting goods, mining for ores, selling produce, and socializing with the townsfolk, including marriage and having children.`}
-      ]
+    games: []
   }
   
+      componentDidMount() {
+        axios.get("https://react-notes-61c78.firebaseio.com/games.json")
+          .then(response => {
+              console.log(response);
+              this.setState({
+                games: Object.values(response.data)
+              })
+          });
+      }
+      
+      
+      handleData = () => {
+        axios({
+          url: "https://react-notes-61c78.firebaseio.com/games.json",
+          method: "post",
+          data: {title: "Dead Cells", 
+                img: "./media/dead-cells.jpg", 
+                description: `Dead Cells is a rogue-lite, metroidvania inspired, action-platformer. 
+                You'll explore a sprawling, ever-changing castle... 
+                assuming you're able to fight your way past its keepers in 2D souls-lite combat. No checkpoints. Kill, die, learn, repeat.`},
+          contentType: "application/JSON"
+        }).then(response => {
+            console.log(response);
+        }); 
+      }
+  
   render() {
+    
+    
     
       let games = this.state.games.map(el => {
           return <Game title={el.title} img={el.img} description={el.description} />
@@ -37,6 +50,9 @@ class App extends Component {
           </nav>
           <div className="container">
               {games}
+          </div>
+          <div>
+            <button onClick={this.handleData}>Submit Data</button>
           </div>
         </div>
       );    
