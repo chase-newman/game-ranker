@@ -15,18 +15,31 @@ class App extends Component {
     componentDidMount() {
       axios.get("https://game-site-705ad.firebaseio.com/games.json")
         .then(response => {
-            // console.log(response);
-            // console.log(Object.keys(response.data));
-            // for(let game in response.data) {
-            //   console.log(response.data[game])
-            // }
-            //Loop through the data and inject the unique ID as a key
-            let gamesArr = response.data
-            for(let key in gamesArr) {
-              gamesArr.key = key
+            
+            /*First, establish a keys array which will hold the unique ID's that are coming from Firebase*/
+            let keysArr = Object.keys(response.data);
+            
+            /*Next, create a games array which will hold all games. Both the games and the unique IDs are store in response.data*/
+            let gamesArr = []
+            for(let keys in response.data) {
+                gamesArr.push(response.data[keys])   
             }
-            console.log(gamesArr)
-          
+            
+           /*Now, we need to loop through both the games array (gamesArr) and the keys array (keysArr)
+             and inject a new key value pair into the games array which contains each game as an object.
+             */
+             /*Here I use a for loop, starting with a counter variable at 0. At each index for the gamesArr, I pull 
+             the correspdonging key from the keys array and inject it into the games array.*/
+            let counter;
+            for(counter = 0; counter < gamesArr.length; counter++ ) {
+              gamesArr[counter].key = keysArr[counter];
+              console.log(gamesArr);
+            }
+            /*The result is a gamesArr, that has games object which contain unique keys. Now just setState to the new gamesArr*/
+            this.setState({
+                games: gamesArr
+            });
+           
         })
     }
     
